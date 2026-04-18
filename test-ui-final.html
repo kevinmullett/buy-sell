@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Buy-Sell Test UI</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Work+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        colors: {
+          tertiary: "#682e3b",
+          "on-primary": "#ffffff",
+          "surface-bright": "#fff8f6",
+          "error-container": "#ffdad6",
+          "outline-variant": "#e0bfbf",
+          "on-primary-fixed": "#40000c",
+          outline: "#8c7071",
+          "tertiary-fixed-dim": "#ffb2bf",
+          "on-secondary-fixed-variant": "#504348",
+          "surface-container-highest": "#e8e1e0",
+          secondary: "#695b60",
+          "on-tertiary-container": "#ffbec8",
+          "on-tertiary-fixed-variant": "#6f3441",
+          "tertiary-container": "#844552",
+          "secondary-fixed": "#f1dee4",
+          "tertiary-fixed": "#ffd9de",
+          "inverse-primary": "#ffb3b5",
+          "surface-container-low": "#faf2f1",
+          "on-tertiary-fixed": "#390917",
+          "surface-variant": "#e8e1e0",
+          "on-secondary-container": "#6d5f64",
+          "secondary-fixed-dim": "#d4c2c8",
+          "surface-dim": "#e0d8d7",
+          "surface-tint": "#ba1538",
+          "inverse-surface": "#33302f",
+          "on-tertiary": "#ffffff",
+          "primary-fixed-dim": "#ffb3b5",
+          surface: "#fff8f6",
+          "inverse-on-surface": "#f7efee",
+          "background": "#fff8f6",
+          "surface-container-lowest": "#ffffff",
+          "on-primary-container": "#ffbfc1",
+          "surface-container-high": "#eee6e5",
+          primary: "#870023",
+          onerror: "#ffffff",
+          "primary-fixed": "#ffdada",
+          onsecondary: "#ffffff",
+          "secondary-container": "#eedbe1",
+          onsurface: "#1e1b1a",
+          "on-error-container": "#93000a",
+          "surface-container": "#f4eceb",
+          "on-primary-fixed-variant": "#920027",
+          onbackground: "#1e1b1a",
+          "primary-container": "#b10933",
+          onsecondaryfixed: "#23191d",
+          "surface-dim": "#e0d8d7",
+          "surface-tint": "#ba1538",
+          "inverse-surface": "#33302f",
+          "on-tertiary": "#ffffff",
+          "primary-fixed-dim": "#ffb3b5",
+          "error": "#ba1a1a"
+        },
+        borderRadius: {
+          DEFAULT: "0.125rem",
+          lg: "0.25rem",
+          xl: "0.5rem",
+          full: "0.75rem"
+        },
+        fontFamily: {
+          headline: ["Space Grotesk"],
+          body: ["Work Sans"],
+          label: ["Work Sans"]
+        }
+      }
+    }
+  }
+</script>
+<style>
+  .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+  .bento-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 1.5rem; }
+  body { min-height: max(884px, 100dvh); }
+</style>
+</head>
+<body class="bg-surface font-body text-on-surface antialiased min-h-screen pb-32">
+
+<!-- Top App Bar -->
+<header class="fixed top-0 left-0 w-full z-50 flex items-center justify-between px-6 py-4 bg-[#fff8f6]/80 dark:bg-[#1e1b1a]/80 backdrop-blur-xl">
+  <div class="flex items-center gap-3">
+    <div class="w-10 h-10 rounded-full overflow-hidden border-2 border-primary-fixed">
+      <img alt="profile" src="https://lh3.googleusercontent.com/a/ALm5wu0KkDSF0..."/>
+    </div>
+    <div>
+      <h1 class="text-primary font-headline font-semibold">Buy-Sell</h1>
+      <p class="text-xs text-on-secondary-container">Track your purchases & sales</p>
+    </div>
+  </div>
+  <button class="p-2 hover:bg-surface-variant rounded" onclick="toggleDarkMode()">
+    <span class="material-symbols-outlined">dark_mode</span>
+  </button>
+</header>
+
+<!-- Bottom Navigation -->
+<nav class="fixed bottom-0 left-0 w-full z-40 bg-[#fff8f6]/80 dark:bg-[#1e1b1a]/80 backdrop-blur-xl px-6 py-3 flex justify-around">
+  <button class="flex flex-col items-center gap-1 active:text-primary" onclick="showTab('dashboard')">
+    <span class="material-symbols-outlined text-lg">dashboard</span>
+    <span class="text-xs">Dashboard</span>
+  </button>
+  <button class="flex flex-col items-center gap-1" onclick="showTab('inventory')">
+    <span class="material-symbols-outlined text-lg">inventory</span>
+    <span class="text-xs">Inventory</span>
+  </button>
+  <button class="flex flex-col items-center gap-1" onclick="showTab('settings')">
+    <span class="material-symbols-outlined text-lg">settings</span>
+    <span class="text-xs">Settings</span>
+  </button>
+</nav>
+
+<!-- Main Content -->
+<main class="pt-20 pb-24">
+  <div class="container mx-auto px-4">
+
+    <!-- Dashboard Tab -->
+    <div id="dashboard" class="tab-content">
+      <div class="bento-grid">
+        <div class="col-span-2 row-span-2 card p-6">
+          <h2 class="text-2xl font-headline font-semibold mb-4">Overview</h2>
+          <div class="grid grid-cols-3 gap-4">
+            <div class="bg-surface-variant p-4 rounded-xl">
+              <p class="text-sm text-on-secondary-container">Total Items</p>
+              <h3 class="text-3xl font-headline text-primary" id="dItems">0</h3>
+            </div>
+            <div class="bg-surface-variant p-4 rounded-xl">
+              <p class="text-sm text-on-secondary-container">Total Sales</p>
+              <h3 class="text-3xl font-headline text-primary" id="dSales">0</h3>
+            </div>
+            <div class="bg-surface-variant p-4 rounded-xl">
+              <p class="text-sm text-on-secondary-container">Revenue</p>
+              <h3 class="text-3xl font-headline text-primary" id="dRevenue">$0</h3>
+            </div>
+          </div>
+        </div>
+        <div class="col-span-4 row-span-2 card p-6">
+          <h3 class="text-xl font-headline mb-4">Recent Activity</h3>
+          <div id="recentActivity" class="space-y-2">
+            <p class="text-on-surface-variant">No activity yet</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Inventory Tab -->
+    <div id="inventory" class="tab-content hidden">
+      <div class="card p-6 mb-6">
+        <h2 class="text-2xl font-headline font-semibold mb-6">Add Item</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="form-group">
+            <label class="block text-sm font-medium mb-2">Item Name</label>
+            <input type="text" id="addName" class="w-full p-3 border border-outline rounded-lg bg-surface-container-lowest">
+          </div>
+          <div class="form-group">
+            <label class="block text-sm font-medium mb-2">Price</label>
+            <input type="number" id="addPrice" class="w-full p-3 border border-outline rounded-lg bg-surface-container-lowest">
+          </div>
+          <div class="form-group">
+            <label class="block text-sm font-medium mb-2">Category</label>
+            <select id="addCategory" class="w-full p-3 border border-outline rounded-lg bg-surface-container-lowest">
+              <option>Electronics</option>
+              <option>Clothing</option>
+              <option>Books</option>
+              <option>Furniture</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="block text-sm font-medium mb-2">Location (where purchased)</label>
+            <input type="text" id="addLocation" class="w-full p-3 border border-outline rounded-lg bg-surface-container-lowest" placeholder="Store or location name">
+          </div>
+        </div>
+        <button class="btn-primary mt-4" onclick="addItem()">Add Item</button>
+      </div>
+      
+      <div class="card p-6">
+        <h3 class="text-xl font-headline mb-4">Inventory</h3>
+        <div id="inventoryList" class="space-y-3"></div>
+      </div>
+    </div>
+
+    <!-- Settings Tab -->
+    <div id="settings" class="tab-content hidden">
+      <div class="card p-6">
+        <h2 class="text-2xl font-headline font-semibold mb-6">Settings</h2>
+        <div class="space-y-4">
+          <div class="flex items-center justify-between p-3 bg-surface-container-lowest rounded-lg">
+            <span class="font-medium">Dark Mode</span>
+            <button class="w-10 h-6 bg-outline rounded-full relative transition" onclick="toggleSetting(this)">
+              <div class="w-4 h-4 bg-white rounded-full absolute left-1 top-1 transition"></div>
+            </button>
+          </div>
+          <div class="flex items-center justify-between p-3 bg-surface-container-lowest rounded-lg">
+            <span class="font-medium">Email Notifications</span>
+            <button class="w-10 h-6 bg-outline rounded-full relative transition"></button>
+          </div>
+          <div class="flex items-center justify-between p-3 bg-surface-container-lowest rounded-lg">
+            <span class="font-medium">Auto-refresh</span>
+            <button class="w-10 h-6 bg-outline rounded-full relative transition"></button>
+          </div>
+          <div class="flex items-center justify-between p-3 bg-surface-container-lowest rounded-lg">
+            <span class="font-medium">Two-Factor Authentication</span>
+            <button class="w-10 h-6 bg-outline rounded-full relative transition"></button>
+          </div>
+        </div>
+        <div class="mt-6 flex gap-4">
+          <button class="btn-secondary" onclick="resetSettings()">Reset</button>
+          <button class="btn-primary" onclick="saveSettings()">Save</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<script>
+  let inventory = [];
+  let darkMode = false;
+
+  function showTab(tab) {
+    document.querySelectorAll('.tab-content').forEach(t => t.classList.add('hidden'));
+    document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+    document.getElementById(tab).classList.remove('hidden');
+    event.target.closest('button').classList.add('active');
+    if (tab === 'inventory') renderInventory();
+    if (tab === 'dashboard') updateDashboard();
+  }
+
+  function addItem() {
+    const name = document.getElementById('addName').value;
+    const price = parseFloat(document.getElementById('addPrice').value);
+    const category = document.getElementById('addCategory').value;
+    const location = document.getElementById('addLocation').value;
+    
+    if (!name || !price || !category) {
+      alert('Please fill all required fields');
+      return;
+    }
+    
+    inventory.push({ id: Date.now(), name, price, category, location, date: new Date().toISOString().split('T')[0] });
+    renderInventory();
+    updateDashboard();
+    document.getElementById('addName').value = '';
+    document.getElementById('addPrice').value = '';
+    document.getElementById('addLocation').value = '';
+  }
+
+  function deleteItem(id) {
+    if (confirm('Delete this item?')) {
+      inventory = inventory.filter(i => i.id !== id);
+      renderInventory();
+      updateDashboard();
+    }
+  }
+
+  function renderInventory() {
+    const list = document.getElementById('inventoryList');
+    list.innerHTML = inventory.map(item => `
+      <div class="flex items-center justify-between p-4 bg-surface-container-lowest rounded-lg">
+        <div>
+          <div class="font-medium">${item.name}</div>
+          <div class="text-sm text-on-surface-variant">$${item.price} | ${item.category} | ${item.location}</div>
+          <div class="text-xs text-on-surface-variant">Added: ${item.date}</div>
+        </div>
+        <button class="btn-primary text-sm" onclick="deleteItem(${item.id})">Delete</button>
+      </div>
+    `).join('');
+  }
+
+  function toggleDarkMode() {
+    darkMode = !darkMode;
+    document.documentElement.classList.toggle('dark', darkMode);
+  }
+
+  function toggleSetting(element) {
+    element.classList.toggle('active');
+  }
+
+  function saveSettings() {
+    alert('Settings saved!');
+  }
+
+  function resetSettings() {
+    if (confirm('Reset all settings?')) {
+      alert('Settings reset!');
+    }
+  }
+
+  function updateDashboard() {
+    document.getElementById('dItems').textContent = inventory.length;
+    document.getElementById('dSales').textContent = Math.floor(Math.random() * 100);
+    document.getElementById('dRevenue').textContent = '$' + inventory.reduce((s, i) => s + i.price, 0).toFixed(2);
+  }
+
+  // Initialize
+  document.addEventListener('DOMContentLoaded', function() {
+    renderInventory();
+    updateDashboard();
+  });
+</script>
+
+</body></html>
