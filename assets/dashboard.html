@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;family=Work+Sans:wght@300;400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary": "#682e3b",
+                        "on-primary": "#ffffff",
+                        "surface-bright": "#fff8f6",
+                        "error-container": "#ffdad6",
+                        "outline-variant": "#e0bfbf",
+                        "on-primary-fixed": "#40000c",
+                        "outline": "#8c7071",
+                        "tertiary-fixed-dim": "#ffb2bf",
+                        "on-secondary-fixed-variant": "#504348",
+                        "surface-container-highest": "#e8e1e0",
+                        "secondary": "#695b60",
+                        "on-tertiary-container": "#ffbec8",
+                        "on-tertiary-fixed-variant": "#6f3441",
+                        "tertiary-container": "#844552",
+                        "secondary-fixed": "#f1dee4",
+                        "tertiary-fixed": "#ffd9de",
+                        "inverse-primary": "#ffb3b5",
+                        "surface-container-low": "#faf2f1",
+                        "on-tertiary-fixed": "#390917",
+                        "surface-variant": "#e8e1e0",
+                        "on-secondary-container": "#6d5f64",
+                        "secondary-fixed-dim": "#d4c2c8",
+                        "on-surface-variant": "#584141",
+                        "inverse-surface": "#33302f",
+                        "on-tertiary": "#ffffff",
+                        "primary-fixed-dim": "#ffb3b5",
+                        "surface": "#fff8f6",
+                        "inverse-on-surface": "#f7efee",
+                        "background": "#fff8f6",
+                        "surface-container-lowest": "#ffffff",
+                        "on-primary-container": "#ffbfc1",
+                        "surface-container-high": "#eee6e5",
+                        "primary": "#870023",
+                        "on-error": "#ffffff",
+                        "primary-fixed": "#ffdada",
+                        "on-secondary": "#ffffff",
+                        "secondary-container": "#eedbe1",
+                        "on-surface": "#1e1b1a",
+                        "on-error-container": "#93000a",
+                        "surface-container": "#f4eceb",
+                        "on-primary-fixed-variant": "#920027",
+                        "on-background": "#1e1b1a",
+                        "primary-container": "#b10933",
+                        "on-secondary-fixed": "#23191d",
+                        "surface-dim": "#e0d8d7",
+                        "surface-tint": "#ba1538",
+                        "error": "#ba1a1a"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "fontFamily": {
+                        "headline": ["Space Grotesk"],
+                        "body": ["Work Sans"],
+                        "label": ["Work Sans"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .bento-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 1.5rem;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface font-body text-on-surface antialiased min-h-screen pb-32">
+<!-- TopAppBar -->
+<header class="fixed top-0 left-0 w-full z-50 flex items-center justify-between px-6 py-4 bg-[#fff8f6]/80 dark:bg-[#1e1b1a]/80 backdrop-blur-xl">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full overflow-hidden border-2 border-primary-fixed">
+<img alt="user profile" data-alt="professional headshot of a smiling young male entrepreneur in a clean minimal office setting with soft natural light" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCLBx1hrtbGUdBsoZEXOQmXRCBh93kL_yHdkqpSX2F7uWFoRDwzGbnqpNX4F5FvY6QigQwO7l_PaQ_UuhE8XoVWKW6U_Bn4JgxBD2l2Q-EzsuTg9ypy0DRnckREEaBqiBMN25ItEm9A5ldsP2uKEzzbbhSn-fRAhLDSz_0iq4DNKbelLm4ferHJrv6FK4lliPsB37czaHBk2XcLQLgU66NMzDQymEquWY1hYufbwHzOAPS_TeaI6uSCZczrl90XDbsKReTOp-xNr1U2"/>
+</div>
+<span class="font-['Space_Grotesk'] tracking-tighter font-bold uppercase text-2xl font-black tracking-tighter text-[#a62639] dark:text-[#db324d]">Bought It</span>
+</div>
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-[#f4eceb] transition-colors">
+<span class="material-symbols-outlined text-[#a62639]">notifications</span>
+</button>
+</header>
+<main class="pt-24 px-6 max-w-7xl mx-auto">
+<!-- Hero: Total Net Profit Card -->
+<section class="mb-10">
+<div class="relative overflow-hidden rounded-xl p-8 bg-gradient-to-br from-[#a62639] to-[#511c29] text-white shadow-2xl shadow-[#a62639]/20">
+<div class="relative z-10">
+<span class="font-headline text-sm font-medium tracking-[0.2em] uppercase opacity-80">Total Net Profit</span>
+<div class="flex items-baseline gap-2 mt-2">
+<span class="text-2xl font-light opacity-90">$</span>
+<h1 class="text-7xl font-headline font-bold tracking-tighter">42,890.00</h1>
+</div>
+<div class="mt-8 flex items-center gap-4">
+<div class="flex items-center gap-1 bg-white/10 backdrop-blur-md px-3 py-1 rounded-full text-xs font-semibold">
+<span class="material-symbols-outlined text-sm">trending_up</span>
+<span>+12.4% THIS MONTH</span>
+</div>
+</div>
+</div>
+<!-- Decorative element -->
+<div class="absolute -right-10 -bottom-10 w-64 h-64 bg-white/5 rounded-full blur-3xl"></div>
+<div class="absolute top-0 right-0 p-8 opacity-20">
+<span class="material-symbols-outlined text-9xl" style="font-variation-settings: 'FILL' 1;">payments</span>
+</div>
+</div>
+</section>
+<!-- Metrics Row 1: Primary Stats -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
+<div class="bg-surface-container-low p-6 rounded-xl border-l-4 border-primary">
+<div class="flex justify-between items-start">
+<div>
+<p class="text-xs font-bold font-headline uppercase tracking-widest text-outline">Inventory Value</p>
+<h3 class="text-3xl font-headline font-bold mt-1 text-on-surface">$124,500</h3>
+</div>
+<span class="material-symbols-outlined text-primary bg-primary-fixed p-2 rounded-lg">inventory_2</span>
+</div>
+<div class="mt-4 w-full bg-surface-container-highest h-1 rounded-full overflow-hidden">
+<div class="bg-primary h-full" style="width: 65%;"></div>
+</div>
+<p class="text-[10px] mt-2 font-medium text-secondary uppercase tracking-tight">65% of warehouse capacity utilized</p>
+</div>
+<div class="bg-surface-container-low p-6 rounded-xl border-l-4 border-tertiary">
+<div class="flex justify-between items-start">
+<div>
+<p class="text-xs font-bold font-headline uppercase tracking-widest text-outline">Sales This Month</p>
+<h3 class="text-3xl font-headline font-bold mt-1 text-on-surface">$18,240</h3>
+</div>
+<span class="material-symbols-outlined text-tertiary bg-tertiary-fixed p-2 rounded-lg">shopping_cart</span>
+</div>
+<div class="mt-4 flex gap-2">
+<span class="px-2 py-1 bg-tertiary-container/10 text-tertiary text-[10px] font-bold rounded uppercase">Target: $20k</span>
+<span class="px-2 py-1 bg-primary-fixed text-primary text-[10px] font-bold rounded uppercase">91% achieved</span>
+</div>
+</div>
+</div>
+<!-- Metrics Row 2: Performance Velocity -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
+<div class="bg-surface-container p-6 rounded-xl flex items-center justify-between">
+<div>
+<p class="text-[10px] font-bold font-headline uppercase tracking-widest text-on-surface-variant">Days Since Last Sale</p>
+<div class="flex items-baseline gap-1 mt-1">
+<span class="text-4xl font-headline font-bold text-primary">02</span>
+<span class="text-xs font-medium text-secondary uppercase">Days</span>
+</div>
+</div>
+<div class="text-right">
+<span class="text-[10px] block font-bold text-error uppercase tracking-tighter mb-1">Attention Needed</span>
+<div class="flex -space-x-2">
+<div class="w-8 h-8 rounded-full bg-surface-container-highest border-2 border-surface-container flex items-center justify-center text-[10px] font-bold">JD</div>
+<div class="w-8 h-8 rounded-full bg-surface-container-highest border-2 border-surface-container flex items-center justify-center text-[10px] font-bold">AM</div>
+</div>
+</div>
+</div>
+<div class="bg-surface-container p-6 rounded-xl flex items-center justify-between">
+<div>
+<p class="text-[10px] font-bold font-headline uppercase tracking-widest text-on-surface-variant">Days Since Adding Inventory</p>
+<div class="flex items-baseline gap-1 mt-1">
+<span class="text-4xl font-headline font-bold text-tertiary">05</span>
+<span class="text-xs font-medium text-secondary uppercase">Days</span>
+</div>
+</div>
+<div class="bg-tertiary-fixed-dim/20 p-3 rounded-lg">
+<span class="material-symbols-outlined text-tertiary">add_box</span>
+</div>
+</div>
+</div>
+<!-- Market Insight & Recent Activity Bento -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+<!-- Market Insight (Column Span 2) -->
+<div class="lg:col-span-2 space-y-6">
+<div class="flex items-center justify-between">
+<h2 class="font-headline font-bold text-xl uppercase tracking-tighter">Market Insight</h2>
+<button class="text-xs font-bold text-primary uppercase tracking-widest hover:underline underline-offset-4">View Report</button>
+</div>
+<div class="bg-surface-container-highest rounded-xl overflow-hidden aspect-[21/9] relative">
+<img alt="Market Trends Chart" class="w-full h-full object-cover" data-alt="minimalist abstract line chart with fluid organic curves representing financial growth in deep red and muted gold tones on a warm cream background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC05lqe-D14n_xHAiY_x46YAQEEp-8-_fvFGjcGEgAb15Q9VvApinoMdhBsK8EVIP8WCKVMB7ArgRJ0AVUR4Jbz6lHUAGqkpu7-RJrRaavMNFm3IhTW68YQkBXLIMaOgXr2-2f_xDSFjNeqBDGJveyA2868vpLFTGCUGQIjjkb_zuzsLHapNG-1HeTn_gfY7MVgU9pGQIpmnH5_Gd6hyy4fPgEH9SJDye82ATWZUL0HzX8IXgly0wIDfPTuOv1_wCv9mKHNz_kdkEvZ"/>
+<div class="absolute top-4 left-4 bg-white/80 backdrop-blur-md px-4 py-2 rounded-lg">
+<p class="text-[10px] font-bold uppercase tracking-widest text-secondary">Trending Category</p>
+<p class="text-sm font-headline font-bold text-on-surface">Vintage Electronics</p>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div class="bg-surface-container-low p-4 rounded-lg">
+<span class="material-symbols-outlined text-primary mb-2">monitoring</span>
+<p class="text-xs font-bold text-on-surface mb-1">Buy Signal</p>
+<p class="text-xs text-secondary leading-relaxed">Mid-century modern furniture demand is up 24% this week.</p>
+</div>
+<div class="bg-surface-container-low p-4 rounded-lg">
+<span class="material-symbols-outlined text-tertiary mb-2">warning</span>
+<p class="text-xs font-bold text-on-surface mb-1">Price Alert</p>
+<p class="text-xs text-secondary leading-relaxed">DSLR body prices fluctuating. Consider holding current stock.</p>
+</div>
+</div>
+</div>
+<!-- Recent Activity -->
+<div class="space-y-6">
+<div class="flex items-center justify-between">
+<h2 class="font-headline font-bold text-xl uppercase tracking-tighter">Recent Activity</h2>
+</div>
+<div class="space-y-4">
+<!-- Activity Item 1 -->
+<div class="flex gap-4 items-start group">
+<div class="w-10 h-10 shrink-0 rounded-lg bg-surface-container-low flex items-center justify-center transition-colors group-hover:bg-primary-fixed">
+<span class="material-symbols-outlined text-sm text-primary">sell</span>
+</div>
+<div class="border-b border-outline-variant/30 pb-4 w-full">
+<p class="text-sm font-bold text-on-surface">Item Sold: Nikon Z6 II</p>
+<p class="text-xs text-secondary mt-1">Sold for $1,450.00 to Alex R.</p>
+<span class="text-[9px] font-bold uppercase tracking-widest text-outline mt-2 block">2 hours ago</span>
+</div>
+</div>
+<!-- Activity Item 2 -->
+<div class="flex gap-4 items-start group">
+<div class="w-10 h-10 shrink-0 rounded-lg bg-surface-container-low flex items-center justify-center transition-colors group-hover:bg-tertiary-fixed">
+<span class="material-symbols-outlined text-sm text-tertiary">add_circle</span>
+</div>
+<div class="border-b border-outline-variant/30 pb-4 w-full">
+<p class="text-sm font-bold text-on-surface">New Inventory Added</p>
+<p class="text-xs text-secondary mt-1">3x Vintage Leica Lens (Used)</p>
+<span class="text-[9px] font-bold uppercase tracking-widest text-outline mt-2 block">Yesterday</span>
+</div>
+</div>
+<!-- Activity Item 3 -->
+<div class="flex gap-4 items-start group">
+<div class="w-10 h-10 shrink-0 rounded-lg bg-surface-container-low flex items-center justify-center transition-colors group-hover:bg-primary-fixed">
+<span class="material-symbols-outlined text-sm text-primary">payments</span>
+</div>
+<div class="pb-4 w-full">
+<p class="text-sm font-bold text-on-surface">Payout Completed</p>
+<p class="text-xs text-secondary mt-1">$4,200.00 sent to bank account.</p>
+<span class="text-[9px] font-bold uppercase tracking-widest text-outline mt-2 block">2 days ago</span>
+</div>
+</div>
+</div>
+<button class="w-full py-4 bg-surface-container-highest text-on-surface font-headline font-bold text-xs uppercase tracking-widest rounded-xl hover:bg-outline-variant transition-colors">
+                    View All History
+                </button>
+</div>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 py-3 pb-6 bg-[#fff8f6]/90 dark:bg-[#1e1b1a]/90 backdrop-blur-2xl border-t-[0.5px] border-[#e0bfbf]/20 shadow-[0_-4px_30px_rgba(30,27,26,0.04)] rounded-t-xl">
+<a class="flex flex-col items-center justify-center bg-[#a62639] text-white rounded-lg px-4 py-1.5 transition-transform active:scale-90" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">dashboard</span>
+<span class="font-['Space_Grotesk'] text-[10px] font-bold uppercase tracking-widest mt-1">Dashboard</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#56494e] dark:text-[#a29c9b] px-4 py-1.5 hover:bg-[#eedbe1] dark:hover:bg-[#511c29] transition-all" href="#">
+<span class="material-symbols-outlined">inventory_2</span>
+<span class="font-['Space_Grotesk'] text-[10px] font-bold uppercase tracking-widest mt-1">Inventory</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#56494e] dark:text-[#a29c9b] px-4 py-1.5 hover:bg-[#eedbe1] dark:hover:bg-[#511c29] transition-all" href="#">
+<span class="material-symbols-outlined">payments</span>
+<span class="font-['Space_Grotesk'] text-[10px] font-bold uppercase tracking-widest mt-1">Sales</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#56494e] dark:text-[#a29c9b] px-4 py-1.5 hover:bg-[#eedbe1] dark:hover:bg-[#511c29] transition-all" href="#">
+<span class="material-symbols-outlined">monitoring</span>
+<span class="font-['Space_Grotesk'] text-[10px] font-bold uppercase tracking-widest mt-1">Stats</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#56494e] dark:text-[#a29c9b] px-4 py-1.5 hover:bg-[#eedbe1] dark:hover:bg-[#511c29] transition-all" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-['Space_Grotesk'] text-[10px] font-bold uppercase tracking-widest mt-1">Settings</span>
+</a>
+</nav>
+</body></html>
