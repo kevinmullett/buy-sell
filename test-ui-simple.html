@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buy-Sell Test UI</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Work Sans', sans-serif; background: var(--surface); color: var(--text-primary); padding: 20px; }
+        .container { max-width: 800px; margin: 0 auto; }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        .header h1 { font-family: var(--font-headline); color: var(--primary); }
+        .nav button { background: none; border: 1px solid var(--outline); padding: 8px 16px; margin-left: 8px; cursor: pointer; border-radius: 4px; }
+        .nav button.active { background: var(--primary); color: white; border-color: var(--primary); }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .card { background: var(--surface-container); border: 1px solid var(--outline); border-radius: 8px; padding: 20px; margin-bottom: 20px; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: 500; }
+        .form-group input, .form-group select { width: 100%; padding: 8px; border: 1px solid var(--outline); border-radius: 4px; }
+        .btn { padding: 8px 16px; border: 1px solid var(--outline); background: var(--surface-container-highest); border-radius: 4px; cursor: pointer; }
+        .btn-primary { background: var(--primary); color: white; border-color: var(--primary); }
+        .inventory-item { padding: 15px; border: 1px solid var(--outline); border-radius: 8px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+        .dark-mode { --surface: #1a1a1a; --surface-container: #2a2a2a; --text-primary: #ffffff; --outline: #555; }
+        .simple-toggle { width: 40px; height: 20px; background: var(--outline); border-radius: 10px; position: relative; cursor: pointer; }
+        .simple-toggle.active { background: var(--primary); }
+        .simple-toggle::after { content: ''; position: absolute; width: 16px; height: 16px; background: white; border-radius: 50%; top: 2px; left: 2px; transition: transform 0.2s; }
+        .simple-toggle.active::after { transform: translateX(20px); }
+        .location-tag { background: var(--surface-container-highest); padding: 4px 8px; border-radius: 12px; font-size: 0.8rem; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📦 Buy-Sell</h1>
+            <div>
+                <button class="simple-toggle" id="darkModeToggle" onclick="toggleDarkMode()"></button>
+            </div>
+        </div>
+
+        <div class="nav">
+            <button class="active" onclick="showTab('dashboard')">Dashboard</button>
+            <button onclick="showTab('inventory')">Inventory</button>
+            <button onclick="showTab('settings')">Settings</button>
+        </div>
+
+        <!-- Dashboard Tab -->
+        <div id="dashboard" class="tab-content active">
+            <div class="card">
+                <h2>Dashboard</h2>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin: 20px 0;">
+                    <div class="card" style="text-align: center;">
+                        <h3 id="dashboardItems">0</h3>
+                        <small>Items</small>
+                    </div>
+                    <div class="card" style="text-align: center;">
+                        <h3 id="dashboardSales">0</h3>
+                        <small>Sales</small>
+                    </div>
+                    <div class="card" style="text-align: center;">
+                        <h3 id="dashboardRevenue">$0</h3>
+                        <small>Revenue</small>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <h3>Recent Activity</h3>
+                <div id="recentActivity" style="color: #666; padding: 10px;">No activity yet</div>
+            </div>
+        </div>
+
+        <!-- Inventory Tab -->
+        <div id="inventory" class="tab-content">
+            <div class="card">
+                <h3>Add Item</h3>
+                <div class="form-group">
+                    <label>Item Name</label>
+                    <input type="text" id="addItemName" placeholder="Item name">
+                </div>
+                <div class="form-group">
+                    <label>Price</label>
+                    <input type="number" id="addItemPrice" placeholder="0.00" step="0.01">
+                </div>
+                <div class="form-group">
+                    <label>Category</label>
+                    <select id="addItemCategory">
+                        <option value="">Select Category</option>
+                        <option value="electronics">Electronics</option>
+                        <option value="clothing">Clothing</option>
+                        <option value="books">Books</option>
+                        <option value="furniture">Furniture</option>
+                        <option value="sports">Sports</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Location (where purchased)</label>
+                    <input type="text" id="addItemLocation" placeholder="Store name or location">
+                </div>
+                <button class="btn btn-primary" onclick="addItem()">Add Item</button>
+            </div>
+            <div class="card">
+                <h3>Inventory</h3>
+                <div id="inventoryList"></div>
+            </div>
+        </div>
+
+        <!-- Settings Tab -->
+        <div id="settings" class="tab-content">
+            <div class="card">
+                <h3>Settings</h3>
+                <div class="form-group">
+                    <label>Dark Mode</label>
+                    <div class="simple-toggle" id="settingsDarkMode" onclick="toggleSetting(this)"></div>
+                </div>
+                <div class="form-group">
+                    <label>Email Notifications</label>
+                    <div class="simple-toggle" id="settingsEmail" onclick="toggleSetting(this)"></div>
+                </div>
+                <div class="form-group">
+                    <label>Auto-refresh</label>
+                    <div class="simple-toggle" id="settingsRefresh" onclick="toggleSetting(this)"></div>
+                </div>
+                <div class="form-group">
+                    <label>Two-Factor Authentication</label>
+                    <div class="simple-toggle" id="settings2FA" onclick="toggleSetting(this)"></div>
+                </div>
+                <button class="btn btn-primary" onclick="saveSettings()">Save Settings</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let inventory = [];
+        let darkMode = false;
+
+        function showTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active'));
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+            if (tabName === 'inventory') renderInventory();
+            if (tabName === 'dashboard') updateDashboard();
+        }
+
+        function addItem() {
+            const name = document.getElementById('addItemName').value;
+            const price = parseFloat(document.getElementById('addItemPrice').value);
+            const category = document.getElementById('addItemCategory').value;
+            const location = document.getElementById('addItemLocation').value;
+            
+            if (!name || !price || !category) {
+                alert('Please fill all required fields');
+                return;
+            }
+            
+            inventory.push({ id: Date.now(), name, price, category, location, date: new Date().toISOString().split('T')[0] });
+            renderInventory();
+            updateDashboard();
+            document.getElementById('addItemName').value = '';
+            document.getElementById('addItemPrice').value = '';
+            document.getElementById('addItemLocation').value = '';
+        }
+
+        function deleteItem(id) {
+            if (confirm('Delete this item?')) {
+                inventory = inventory.filter(i => i.id !== id);
+                renderInventory();
+                updateDashboard();
+            }
+        }
+
+        function renderInventory() {
+            const list = document.getElementById('inventoryList');
+            list.innerHTML = inventory.map(item => `
+                <div class="inventory-item">
+                    <div>
+                        <div style="font-weight: bold;">${item.name}</div>
+                        <div style="font-size: 0.9rem; color: #666;">$${item.price} | ${item.category} | ${item.location}</div>
+                        <div style="font-size: 0.8rem; color: #999;">Added: ${item.date}</div>
+                    </div>
+                    <button class="btn" onclick="deleteItem(${item.id})" style="background: #dc3545; color: white; border-color: #dc3545;">Delete</button>
+                </div>
+            `).join('');
+        }
+
+        function toggleDarkMode() {
+            darkMode = !darkMode;
+            document.body.classList.toggle('dark-mode', darkMode);
+            document.getElementById('darkModeToggle').classList.toggle('active', darkMode);
+        }
+
+        function toggleSetting(element) {
+            element.classList.toggle('active');
+        }
+
+        function saveSettings() {
+            alert('Settings saved!');
+        }
+
+        function updateDashboard() {
+            document.getElementById('dashboardItems').textContent = inventory.length;
+            document.getElementById('dashboardSales').textContent = Math.floor(Math.random() * 100);
+            document.getElementById('dashboardRevenue').textContent = '$' + inventory.reduce((sum, item) => sum + item.price, 0).toFixed(2);
+            document.getElementById('recentActivity').textContent = inventory.length > 0 ? 'Last updated: ' + new Date().toLocaleString() : 'No activity yet';
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            renderInventory();
+            updateDashboard();
+        });
+    </script>
+</body>
+</html>
