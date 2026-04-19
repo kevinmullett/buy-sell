@@ -1,0 +1,23 @@
+# Ignore assets and data (contain personal inventory files and database)
+assets/
+reports/
+data/
+
+# Ignore scratch/debug files
+analyze_*.php
+check_*.php
+clear_*.php
+debug_*.php
+dump_*.php
+find_*.php
+inspect_*.php
+search_*.php
+test_*.php
+temp_dump.txt
+
+# OS and IDE files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+.gemini/

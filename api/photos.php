@@ -1,166 +1,89 @@
 <?php
 /**
- * Photo Upload and Management API Endpoints
- * Handles item photo uploads and retrieval
+ * Photos API — multi-photo upload, receipt support
  */
-
-require_once '../database.php';
-require_once '../functions.php';
+require_once __DIR__ . '/../database.php';
 
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Methods: POST, GET, PUT, DELETE, OPTIONS');
+header('Access-Control-Allow-Methods: GET, POST, DELETE, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type');
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') { http_response_code(200); exit; }
 
-// Handle preflight requests
-if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    http_response_code(200);
-    exit;
-}
-
-$method = $_SERVER['REQUEST_METHOD'];
-$input = json_decode(file_get_contents('php://input'), true);
+$method  = $_SERVER['REQUEST_METHOD'];
+$item_id = intval($_GET['item_id'] ?? $_POST['item_id'] ?? 0);
+$photoId = intval($_GET['id'] ?? 0);
 
 switch ($method) {
-    case 'POST':
-        uploadPhoto($input);
-        break;
-    case 'GET':
-        $itemId = $_GET['item_id'] ?? null;
-        if ($itemId) {
-            getPhotos($itemId);
-        } else {
-            getAllPhotos();
-        }
-        break;
-    case 'DELETE':
-        $input = json_decode(file_get_contents('php://input'), true);
-        deletePhoto($input['photo_id'] ?? 0);
-        break;
-    default:
-        http_response_code(405);
-        echo json_encode(['error' => 'Method not allowed']);
+    case 'GET':    getPhotos($item_id); break;
+    case 'POST':   uploadPhotos($item_id); break;
+    case 'DELETE': deletePhoto($photoId); break;
+    default: http_response_code(405); echo json_encode(['error'=>'Method not allowed']);
 }
 
-function uploadPhoto($data) {
+function getPhotos($item_id) {
     global $pdo;
-    
-    if (empty($_FILES['photo']['tmp_name'])) {
-        http_response_code(400);
-        echo json_encode(['error' => 'No photo uploaded']);
-        return;
-    }
-    
-    $itemId = $data['item_id'] ?? 0;
-    $file = $_FILES['photo'];
-    
-    // Validate file type
-    $allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
-    $fileType = mime_content_type($file['tmp_name']);
-    
-    if (!in_array($fileType, $allowedTypes)) {
-        http_response_code(400);
-        echo json_encode(['error' => 'Invalid file type. Allowed: JPG, PNG, GIF, WEBP']);
-        return;
-    }
-    
-    // Create uploads directory if it doesn't exist
+    if (!$item_id) { http_response_code(400); echo json_encode(['error'=>'item_id required']); return; }
+    $stmt = $pdo->prepare("SELECT * FROM item_photos WHERE item_id=? ORDER BY photo_type, created_at");
+    $stmt->execute([$item_id]);
+    echo json_encode(['success'=>true,'data'=>$stmt->fetchAll()]);
+}
+
+function uploadPhotos($item_id) {
+    global $pdo;
+    if (!$item_id) { http_response_code(400); echo json_encode(['error'=>'item_id required']); return; }
+
+    $photoType = $_POST['photo_type'] ?? 'item'; // 'item' or 'receipt'
+    $allowed   = ['image/jpeg','image/png','image/gif','image/webp','image/heic'];
+    $maxSize   = 10 * 1024 * 1024; // 10MB
     $uploadDir = __DIR__ . '/../photos/';
-    if (!is_dir($uploadDir)) {
-        mkdir($uploadDir, 0755, true);
-    }
-    
-    // Generate unique filename
-    $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
-    $filename = uniqid('photo_') . '.' . $extension;
-    $filePath = $uploadDir . $filename;
-    
-    // Move uploaded file
-    if (!move_uploaded_file($file['tmp_name'], $filePath)) {
-        http_response_code(500);
-        echo json_encode(['error' => 'Failed to move uploaded file']);
-        return;
-    }
-    
-    try {
-        $stmt = $pdo->prepare("INSERT INTO photos (item_id, file_path, original_name, file_type, file_size) VALUES (?, ?, ?, ?, ?)");
-        $stmt->execute([
-            $itemId,
-            $filePath,
-            $file['name'],
-            $fileType,
-            $file['size']
-        ]);
-        
-        $photoId = $pdo->lastInsertId();
-        echo json_encode([
-            'success' => true,
-            'id' => $photoId,
-            'file_path' => $filePath,
-            'message' => 'Photo uploaded successfully'
-        ]);
-    } catch (PDOException $e) {
-        // Delete uploaded file on database error
-        @unlink($filePath);
-        http_response_code(500);
-        echo json_encode(['error' => 'Failed to save photo record: ' . $e->getMessage()]);
-    }
-}
+    if (!is_dir($uploadDir)) mkdir($uploadDir, 0777, true);
 
-function getPhotos($itemId) {
-    global $pdo;
-    
-    try {
-        $stmt = $pdo->prepare("SELECT * FROM photos WHERE item_id = ? ORDER BY created_at DESC");
-        $stmt->execute([$itemId]);
-        $photos = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        echo json_encode(['success' => true, 'data' => $photos]);
-    } catch (PDOException $e) {
-        http_response_code(500);
-        echo json_encode(['error' => 'Failed to fetch photos: ' . $e->getMessage()]);
-    }
-}
+    $files   = $_FILES['photos']   ?? $_FILES['file']   ?? null;
+    $saved   = [];
+    $errors  = [];
 
-function getAllPhotos() {
-    global $pdo;
-    
-    try {
-        $stmt = $pdo->query("SELECT p.*, i.name as item_name FROM photos p LEFT JOIN items i ON p.item_id = i.id ORDER BY p.created_at DESC");
-        $photos = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        echo json_encode(['success' => true, 'data' => $photos]);
-    } catch (PDOException $e) {
-        http_response_code(500);
-        echo json_encode(['error' => 'Failed to fetch photos: ' . $e->getMessage()]);
-    }
-}
+    if (!$files) { http_response_code(400); echo json_encode(['error'=>'No files uploaded']); return; }
 
-function deletePhoto($photoId) {
-    global $pdo;
-    
-    try {
-        // Get photo info before deleting
-        $stmt = $pdo->prepare("SELECT file_path FROM photos WHERE id = ?");
-        $stmt->execute([$photoId]);
-        $photo = $stmt->fetch(PDO::FETCH_ASSOC);
-        
-        if (!$photo) {
-            http_response_code(404);
-            echo json_encode(['error' => 'Photo not found']);
-            return;
+    // Normalize single vs multiple file upload
+    if (!is_array($files['name'])) {
+        foreach ($files as $k => $v) { $files[$k] = [$v]; }
+    }
+
+    $count = count($files['name']);
+    for ($i = 0; $i < $count; $i++) {
+        if ($files['error'][$i] !== UPLOAD_ERR_OK) { $errors[] = "File $i upload error"; continue; }
+        if ($files['size'][$i] > $maxSize) { $errors[] = "{$files['name'][$i]}: too large (max 10MB)"; continue; }
+
+        $mime = mime_content_type($files['tmp_name'][$i]);
+        if (!in_array($mime, $allowed)) { $errors[] = "{$files['name'][$i]}: invalid type"; continue; }
+
+        $ext      = pathinfo($files['name'][$i], PATHINFO_EXTENSION) ?: 'jpg';
+        $filename = $photoType . '_' . $item_id . '_' . uniqid() . '.' . strtolower($ext);
+        $dest     = $uploadDir . $filename;
+
+        if (!move_uploaded_file($files['tmp_name'][$i], $dest)) {
+            $errors[] = "{$files['name'][$i]}: failed to save"; continue;
         }
-        
-        // Delete file from filesystem
-        if (file_exists($photo['file_path'])) {
-            unlink($photo['file_path']);
-        }
-        
-        // Delete database record
-        $stmt = $pdo->prepare("DELETE FROM photos WHERE id = ?");
-        $stmt->execute([$photoId]);
-        
-        echo json_encode(['success' => true, 'message' => 'Photo deleted successfully']);
-    } catch (PDOException $e) {
-        http_response_code(500);
-        echo json_encode(['error' => 'Failed to delete photo: ' . $e->getMessage()]);
+
+        $stmt = $pdo->prepare("INSERT INTO item_photos (item_id,file_path,original_name,file_type,file_size,photo_type) VALUES (?,?,?,?,?,?)");
+        $stmt->execute([$item_id, 'photos/'.$filename, $files['name'][$i], $mime, $files['size'][$i], $photoType]);
+        $saved[] = ['id'=>$pdo->lastInsertId(),'file_path'=>'photos/'.$filename,'photo_type'=>$photoType];
     }
+
+    echo json_encode(['success'=>true,'saved'=>$saved,'errors'=>$errors,'count'=>count($saved)]);
+}
+
+function deletePhoto($id) {
+    global $pdo;
+    if (!$id) { http_response_code(400); echo json_encode(['error'=>'id required']); return; }
+    $stmt = $pdo->prepare("SELECT file_path FROM item_photos WHERE id=?");
+    $stmt->execute([$id]);
+    $photo = $stmt->fetch();
+    if ($photo) {
+        $path = __DIR__ . '/../' . $photo['file_path'];
+        if (file_exists($path)) unlink($path);
+        $pdo->prepare("DELETE FROM item_photos WHERE id=?")->execute([$id]);
+    }
+    echo json_encode(['success'=>true]);
 }

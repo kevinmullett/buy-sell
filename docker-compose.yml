@@ -7,32 +7,7 @@ services:
       - "8080:80"
     volumes:
       - .:/var/www/html
+      - ./data:/var/www/html/data
     environment:
       - APACHE_RUN_USER=www-data
       - APACHE_RUN_GROUP=www-data
-    networks:
-      - app-network
-
-  db:
-    image: mysql:8.0
-    environment:
-      MYSQL_ROOT_PASSWORD: rootpassword
-      MYSQL_DATABASE: buy_sell
-      MYSQL_USER: appuser
-      MYSQL_PASSWORD: apppassword
-    volumes:
-      - db_data:/var/lib/mysql
-    networks:
-      - app-network
-    healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
-      timeout: 20s
-      retries: 10
-
-networks:
-  app-network:
-    driver: bridge
-
-volumes:
-  db_data:
-    name: buy-sell-db-data
