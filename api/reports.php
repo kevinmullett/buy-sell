@@ -15,7 +15,10 @@ $month  = $_GET['month']  ?? null;  // null = whole year
 $export = $_GET['export'] ?? null;  // 'csv' triggers download
 
 // Build date range from year + optional month
-if ($month) {
+if ($year === 'all') {
+    $startDate = "1970-01-01";
+    $endDate   = "2099-12-31";
+} elseif ($month) {
     $startDate = "$year-" . str_pad($month, 2, '0', STR_PAD_LEFT) . "-01";
     $endDate   = date('Y-m-t', strtotime($startDate));
 } else {
@@ -62,8 +65,8 @@ function getDashboard() {
 
         $salesData = $pdo->query("SELECT COUNT(*) AS total_sales,
             COALESCE(SUM(s.sale_price),0) AS total_revenue,
-            COALESCE(SUM(s.sale_price - i.purchase_price - s.shipping_cost),0) AS net_profit,
-            COALESCE(AVG(s.sale_price - i.purchase_price - s.shipping_cost),0) AS avg_profit_per_sale,
+            COALESCE(SUM(s.sale_price - i.purchase_price - s.shipping_cost - COALESCE(s.fees,0)),0) AS net_profit,
+            COALESCE(AVG(s.sale_price - i.purchase_price - s.shipping_cost - COALESCE(s.fees,0)),0) AS avg_profit_per_sale,
             COALESCE(SUM(s.shipping_cost),0) AS total_shipping,
             COALESCE(AVG(CAST(julianday(s.sale_date)-julianday(i.purchase_date) AS INTEGER)),0) AS avg_days_to_sell
             FROM sales s JOIN items i ON s.item_id=i.id")->fetch();
@@ -71,7 +74,7 @@ function getDashboard() {
         $monthStart = date('Y-m-01');
         $ms = $pdo->prepare("SELECT COUNT(*) AS sales_count,
             COALESCE(SUM(s.sale_price),0) AS revenue,
-            COALESCE(SUM(s.sale_price-i.purchase_price-s.shipping_cost),0) AS profit
+            COALESCE(SUM(s.sale_price-i.purchase_price-s.shipping_cost - COALESCE(s.fees,0)),0) AS profit
             FROM sales s JOIN items i ON s.item_id=i.id WHERE s.sale_date >= ?");
         $ms->execute([$monthStart]);
         $monthData = $ms->fetch();

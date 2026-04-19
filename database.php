@@ -93,9 +93,16 @@ $pdo->exec("CREATE TABLE IF NOT EXISTS sales (
     sale_notes     TEXT,
     packing_method TEXT,
     shipping_cost  DECIMAL(10,2) DEFAULT 0,
+    fees           DECIMAL(10,2) DEFAULT 0,
     created_at     DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (item_id) REFERENCES items(id) ON DELETE CASCADE
 )");
+
+// Check for fees column in sales
+$salesCols = array_column($pdo->query("PRAGMA table_info(sales)")->fetchAll(), 'name');
+if (!in_array('fees', $salesCols)) {
+    $pdo->exec("ALTER TABLE sales ADD COLUMN fees DECIMAL(10,2) DEFAULT 0");
+}
 
 // ── Item Photos ───────────────────────────────────────────────────────────────
 $pdo->exec("CREATE TABLE IF NOT EXISTS item_photos (

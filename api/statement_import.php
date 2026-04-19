@@ -318,12 +318,13 @@ try {
 
         $pdo->prepare("
             INSERT INTO sales
-                (item_id, sale_date, sale_price, sale_platform, shipping_cost, sale_notes, created_at)
-            VALUES (?, ?, ?, 'eBay', 0, ?, ?)
+                (item_id, sale_date, sale_price, sale_platform, shipping_cost, fees, sale_notes, created_at)
+            VALUES (?, ?, ?, 'eBay', 0, ?, ?, ?)
         ")->execute([
             $itemId,
             $t['date'],
             $t['amount'],
+            $t['fees'],
             $notes,
             $t['date'] . ' 00:00:00',
         ]);

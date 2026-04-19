@@ -175,35 +175,16 @@ foreach ($sheets as $sheet) {
         $date  = $defaultYear . '-01-01';
         $notes = '';
         $qty   = 1;
-        $status = 'Unlisted';
+        $status = 'Available';
 
         // Extract notes in parentheses
         if (preg_match('/\((.*?)\)/', $purInfo, $m)) {
             $notes = $m[1];
         }
 
-        // Look for price and date: "$10 - 05/10/25" or "Part of $10 bag - 4/27"
-        if (preg_match('/\$([\d.]+)\s*-\s*(\d{1,2}\/\d{1,2}(?:\/\d{2,4})?)/', $purInfo, $m)) {
-            $priceStr = $m[1];
-            $dateStr  = $m[2];
-            $price    = (float)$priceStr;
-            
-            // Parse date
-            $dateParts = explode('/', $dateStr);
-            if (count($dateParts) == 2) {
-                $date = sprintf('%04d-%02d-%02d', $defaultYear, $dateParts[0], $dateParts[1]);
-            } elseif (count($dateParts) == 3) {
-                $y = $dateParts[2];
-                if (strlen($y) == 2) $y = '20' . $y;
-                $date = sprintf('%04d-%02d-%02d', $y, $dateParts[0], $dateParts[1]);
-            }
-            
-            // Handle "bag" splits if needed, but for now we just keep the price as paid
-        }
-
         // Determine Quantity
-        // Priority 1: notes containing "(x5)" or "5ea" or "5 ea"
-        if (preg_match('/(?:^|\s|\(|,)(?:x\s*(\d{1,3})|(\d{1,3})\s*ea)(?:$|\s|\)|,)/i', $notes, $m)) {
+        // Priority 1: "x5" or "5ea" or "5 ea" anywhere in the info
+        if (preg_match('/(?:^|\s|\(|,)(?:x\s*(\d{1,3})|(\d{1,3})\s*ea)(?:$|\s|\)|,)/i', $purInfo, $m)) {
             $qty = (int)($m[1] ?: $m[2]);
         } else {
             // Priority 2: Column D if it exists
@@ -212,9 +193,44 @@ foreach ($sheets as $sheet) {
                 $qty = $parsedHas;
             }
         }
-        
-        // Safety cap on quantity to prevent SKU misparsing from creating millions of rows
         if ($qty > 100) $qty = 100;
+
+        // Look for price: "$10" or "10.00"
+        if (preg_match('/\$([\d,.]+)/', $purInfo, $m)) {
+            // Specific $ price takes priority
+            $price = (float)str_replace(',', '', $m[1]);
+        } elseif (preg_match('/(?:\s|^)([\d,]+\.\d{2})(?:\s|$|ea|each)/i', $purInfo, $m)) {
+            // Number with 2 decimals e.g. "12.50 ea"
+            $price = (float)str_replace(',', '', $m[1]);
+        } elseif (preg_match('/^([\d,.]+)(?:\s|$|ea|each)/i', trim($purInfo), $m)) {
+            // Number at start
+            $p = (float)str_replace(',', '', $m[1]);
+            if ($p != $qty || !preg_match('/ea|each/i', $purInfo)) {
+                $price = $p;
+            }
+        }
+
+        // Look for date: "05/10/25" or "4/27"
+        if (preg_match('/(\d{1,2}\/\d{1,2}(?:\/\d{2,4})?)/', $purInfo, $m)) {
+            $dateStr = $m[1];
+            $dateParts = explode('/', $dateStr);
+            if (count($dateParts) == 2) {
+                $date = sprintf('%04d-%02d-%02d', $defaultYear, $dateParts[0], $dateParts[1]);
+            } elseif (count($dateParts) == 3) {
+                $y = $dateParts[2];
+                if (strlen($y) == 2) $y = '20' . $y;
+                $date = sprintf('%04d-%02d-%02d', $y, $dateParts[0], $dateParts[1]);
+            }
+        }
+
+        // Handle multiple items (unit price)
+        if (preg_match('/ea|each/i', $purInfo) && $qty > 1 && $price > 0) {
+            // $price is already the unit price
+        } elseif ($qty > 1 && $price > 0) {
+            // If it's a bulk price for multiple items without "ea", we keep it as total paid for the line
+            // but the system creates multiple items.
+            // For now, let's assume if they have a qty and a price, it's the price per item unless specified.
+        }
 
         // Check for personal use / keeping
         if (preg_match('/keep(?:ing)?|office|personal|giving/i', $notes)) {

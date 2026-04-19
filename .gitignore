@@ -13,6 +13,8 @@ find_*.php
 inspect_*.php
 search_*.php
 test_*.php
+db_*.php
+undo_*.php
 temp_dump.txt
 
 # OS and IDE files

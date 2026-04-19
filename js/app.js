@@ -31,6 +31,7 @@ class BoughtItApp {
         const yearSel = document.getElementById('rpt-year');
         if (yearSel) {
             const curYear = new Date().getFullYear();
+            yearSel.innerHTML = '<option value="all">All Time</option>';
             for (let y = curYear; y >= 2020; y--) {
                 yearSel.innerHTML += `<option value="${y}"${y === curYear ? ' selected' : ''}>${y}</option>`;
             }
